@@ -20,19 +20,16 @@ object Client {
 
   private def processor(
       orderStub: OrderFs2Grpc[IO, Metadata],
-      orders: Stream[IO, OrderRequest]
+      orders: Stream[IO, OrderRequest],
   ): IO[List[String]] = {
     for {
-      response <- orderStub.sendOrderStream(
-        orders,
-        new Metadata()
-      )
-      str <- Stream.eval(
-        IO(
-          s"Processed orderid: ${response.orderid} for items: ${formatItemsToStr(response.items)
-              .mkString(" and ")}, totaling to ${response.total.toString}"
-        )
-      )
+      response <- orderStub.sendOrderStream(orders, new Metadata())
+      str      <- Stream.eval(
+                    IO(
+                      s"Processed orderid: ${response.orderid} for items: ${formatItemsToStr(response.items)
+                        .mkString(" and ")}, totaling to ${response.total.toString}",
+                    ),
+                  )
     } yield str
   }.compile.toList
 

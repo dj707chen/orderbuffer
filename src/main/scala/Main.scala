@@ -1,12 +1,12 @@
 import cats.effect.*
-import org.http4s.ember.server.EmberServerBuilder
+import cats.syntax.parallel.*
 import com.comcast.ip4s.*
 import com.rockthejvm.routes.AppRoutes.restService
 import com.rockthejvm.service.Server.grpcServer
-import cats.syntax.parallel.*
+import org.http4s.ember.server.EmberServerBuilder
 
 object Main extends IOApp {
-  def httpServerStream =
+  private def httpServerStream: IO[Nothing] =
     EmberServerBuilder
       .default[IO]
       .withHost(host"0.0.0.0")
@@ -20,7 +20,7 @@ object Main extends IOApp {
       httpServerStream,
       grpcServer
         .evalMap(svr => IO(svr.start()))
-        .useForever
+        .useForever,
     )
       .parMapN((http, grpc) => ())
       .as(ExitCode.Success)

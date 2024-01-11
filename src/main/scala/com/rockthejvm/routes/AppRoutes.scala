@@ -3,7 +3,7 @@ package com.rockthejvm.routes
 import cats.effect.IO
 import org.http4s.*
 import org.http4s.dsl.io.*
-import com.rockthejvm.protos.orders.{OrderRequest, Item}
+import com.rockthejvm.protos.orders.{ Item, OrderRequest }
 import org.http4s.circe.*
 import io.circe.Decoder
 import io.circe.syntax.*
@@ -19,13 +19,13 @@ object AppRoutes {
   object Orders {
     private given itemDecoder: Decoder[Item] = Decoder.instance { h =>
       for
-        name <- h.get[String]("name")
-        qty <- h.get[Int]("quantity")
+        name   <- h.get[String]("name")
+        qty    <- h.get[Int]("quantity")
         amount <- h.get[Double]("amount")
       yield Item.of(
         name,
         qty,
-        USD(amount)
+        USD(amount),
       ) // Item().withName(name).withQty(qty).withAmount(USD(amount))
     }
 
@@ -33,15 +33,15 @@ object AppRoutes {
       h.get[Seq[Item]]("items").map { items =>
         OrderRequest.of(Random.between(1000, 2000), items)
 
-        // OrderRequest()
-        //  .withOrderid(Random.between(1000,2000))
-        //  .withItems(items)
+      // OrderRequest()
+      //  .withOrderid(Random.between(1000,2000))
+      //  .withItems(items)
 
-        // OrderRequest(
-        //   Random.between(1000,2000),
-        //   items,
-        //   _root_.scalapb.UnknownFieldSet.empty
-        // )
+      // OrderRequest(
+      //   Random.between(1000,2000),
+      //   items,
+      //   _root_.scalapb.UnknownFieldSet.empty
+      // )
       }
     }
 
@@ -59,16 +59,17 @@ object AppRoutes {
       StaticFile
         .fromString[IO](
           "src/main/resources/index.html",
-          Some(req)
+          Some(req),
         )
         .getOrElseF(NotFound())
+
     case req @ POST -> Root / "submit" =>
-      req
+      val processedOrders: IO[List[String]] = req
         .as[Orders]
-        .flatMap { x =>
-          Client.runClient(Stream.emits(x.values).covary[IO])
+        .flatMap { orders =>
+          Client.runClient(Stream.emits(orders.values).covary[IO])
         }
-        .handleError(x => List(x.getMessage))
-        .flatMap(x => Ok(x.asJson))
+        .handleError(err => List(err.getMessage))
+      processedOrders.flatMap(x => Ok(x.asJson))
   }
 }

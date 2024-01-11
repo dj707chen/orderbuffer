@@ -30,10 +30,10 @@ object AppRoutesSuite extends SimpleIOSuite {
           Stream(
             runClient(
               Stream(
-                OrderRequest.of(1000, Seq(Item.of("Iphone", 1, USD(999.99))))
-              )
-            )
-          )
+                OrderRequest.of(1000, Seq(Item.of("Iphone", 1, USD(999.99)))),
+              ),
+            ),
+          ),
       )
       .compile
       .last
