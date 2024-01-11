@@ -16,7 +16,7 @@ class OrderService extends OrderFs2Grpc[IO, Metadata] {
       OrderReply(
         orderReq.orderid,
         orderReq.items,
-        orderReq.items.map(i => i.amount).reduce(_ + _),
+        orderReq.items.map(i => i.amount * i.qty).reduce(_ + _),
       )
     }
   }
