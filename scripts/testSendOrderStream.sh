@@ -2,7 +2,7 @@
 
 # For examples, refer https://github.com/fullstorydev/grpcurl
 
-grpcurl -vv -plaintext -d @ localhost:9999 com.rockthejvm.protos.Order/SendOrderStream <<'EOM'
+grpcurl -vv -plaintext -d @ localhost:9999 com.rockthejvm.protos.Order/SendOrderStream << 'EOM'
     {
         "items": [
             {

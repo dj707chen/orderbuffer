@@ -1,4 +1,4 @@
-## Order Service with gRPC
+# Order Service with gRPC
 
 Based on https://blog.rockthejvm.com/grpc-in-scala-with-fs2-scalapb/
 
@@ -6,13 +6,14 @@ This order service project is developed with Scalapb and fs2-grpc. This code is 
 
 http://localhost:8080/index.html
 
-Install tools
+## Install tools
 ```shell
 brew install grpc_cli
 brew install grpcui
 brew install gRPCurl
 ```
 
+## Try grpcurl
 ```shell
 grpcurl localhost:9999 list
     # Failed to dial target host "localhost:9999": tls: first record does not look like a TLS handshake
@@ -30,3 +31,6 @@ grpcurl -plaintext localhost:9999 list
 ```
     com.rockthejvm.protos.Order
     grpc.reflection.v1alpha.ServerReflection
+
+## Test scripts
+Test scripts are under `scripts` directory.
