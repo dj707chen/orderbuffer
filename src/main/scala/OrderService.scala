@@ -1,4 +1,4 @@
-package com.rockthejvm.service
+package com.rockthejvm
 
 import cats.effect.*
 import com.rockthejvm.protos.orders.*
@@ -6,7 +6,9 @@ import fs2.Stream
 import fs2.grpc.syntax.all.*
 import io.grpc.*
 import io.grpc.netty.shaded.io.grpc.netty.NettyServerBuilder
+import io.grpc.protobuf.services.*
 
+// Implement the defined service
 class OrderService extends OrderFs2Grpc[IO, Metadata] {
   override def sendOrderStream(
       request: Stream[IO, OrderRequest],
@@ -20,18 +22,4 @@ class OrderService extends OrderFs2Grpc[IO, Metadata] {
       )
     }
   }
-}
-
-object Server {
-  private val orderService: Resource[IO, ServerServiceDefinition] =
-    OrderFs2Grpc.bindServiceResource[IO](new OrderService)
-
-  private def runServer(service: ServerServiceDefinition): Resource[IO, Server] =
-    NettyServerBuilder
-      .forPort(9999)
-      .addService(service)
-      .resource[IO]
-
-  val grpcServer: Resource[IO, Server] = orderService.flatMap(service => runServer(service))
-
 }

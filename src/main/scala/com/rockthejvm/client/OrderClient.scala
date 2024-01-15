@@ -35,6 +35,7 @@ object Client {
 
   def runClient(orders: Stream[IO, OrderRequest]): IO[List[String]] =
     managedChannelResource
+      // This is how to get the gRPC client, another way: OrderFs2Grpc.mkClientResource()
       .flatMap(ch => OrderFs2Grpc.stubResource[IO](ch))
       .use(orderResource => processor(orderResource, orders))
 }

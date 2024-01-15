@@ -1,8 +1,10 @@
+package com.rockthejvm
+
 import cats.effect.*
 import cats.syntax.parallel.*
 import com.comcast.ip4s.*
 import com.rockthejvm.routes.AppRoutes.restService
-import com.rockthejvm.service.Server.grpcServer
+import com.rockthejvm.Server.grpcServer
 import org.http4s.ember.server.EmberServerBuilder
 
 object Main extends IOApp {
